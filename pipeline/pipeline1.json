@@ -363,7 +363,7 @@
 					},
 					{
 						"schema": "dbo",
-						"table": "Stream",
+						"table": "FactStream",
 						"cdc_column": "stream_timestamp",
 						"from_date": ""
 					}
