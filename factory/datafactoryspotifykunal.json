@@ -1,0 +1,15 @@
+{
+	"name": "datafactoryspotifykunal",
+	"properties": {
+		"trustModeClaimForMi": {
+			"value": "Disabled",
+			"editable": true
+		}
+	},
+	"location": "uksouth",
+	"identity": {
+		"type": "SystemAssigned",
+		"principalId": "cf2739a2-1005-4fcf-be31-5dc6835db6b8",
+		"tenantId": "31d717f9-32cf-49a3-8a94-402e32306ae1"
+	}
+}
