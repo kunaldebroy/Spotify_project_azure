@@ -178,7 +178,10 @@
 										"referenceName": "Datafactorytodatalake",
 										"type": "LinkedServiceReference"
 									},
-									"path": "@concat('logs/', replace(pipeline().parameters.table, 'Dim', ''), '/', formatDateTime(utcnow(), 'yyyy/MM/dd'), '/', replace(pipeline().parameters.table, 'Dim', ''), '_log_', formatDateTime(utcnow(), 'yyyyMMdd_HHmmss'), '_', pipeline().RunId, '.log')"
+									"path": {
+										"value": "@concat('logs/', replace(pipeline().parameters.table, 'Dim', ''), '/', formatDateTime(utcnow(), 'yyyy/MM/dd'))",
+										"type": "Expression"
+									}
 								},
 								"enableLogging": true,
 								"storeSettings": {
