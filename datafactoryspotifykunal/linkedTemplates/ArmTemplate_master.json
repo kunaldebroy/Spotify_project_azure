@@ -1,0 +1,84 @@
+{
+	"$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+	"contentVersion": "1.0.0.0",
+	"parameters": {
+		"factoryName": {
+			"type": "string",
+			"metadata": "Data Factory name",
+			"defaultValue": "datafactoryspotifykunal"
+		},
+		"Datafactorytodatalake_accountKey": {
+			"type": "secureString",
+			"metadata": "Secure string for 'accountKey' of 'Datafactorytodatalake'"
+		},
+		"SQLtoAzure_password": {
+			"type": "secureString",
+			"metadata": "Secure string for 'password' of 'SQLtoAzure'"
+		},
+		"Datafactorytodatalake_properties_typeProperties_url": {
+			"type": "string",
+			"defaultValue": "https://spotifydatabase.dfs.core.windows.net/"
+		},
+		"SQLtoAzure_properties_typeProperties_server": {
+			"type": "string",
+			"defaultValue": "spotifyonpremdatabase.database.windows.net"
+		},
+		"SQLtoAzure_properties_typeProperties_database": {
+			"type": "string",
+			"defaultValue": "onpremdataspotify"
+		},
+		"SQLtoAzure_properties_typeProperties_userName": {
+			"type": "string",
+			"defaultValue": "adminkunal"
+		},
+		"containerUri": {
+			"type": "string",
+			"metadata": "URI to storage account containing linked ARM templates"
+		},
+		"containerSasToken": {
+			"type": "string",
+			"metadata": "Sas token to storage account containing linked ARM templates"
+		}
+	},
+	"variables": {
+		"factoryId": "[concat('Microsoft.DataFactory/factories/', parameters('factoryName'))]"
+	},
+	"resources": [
+		{
+			"name": "datafactoryspotifykunal_ArmTemplate_0",
+			"type": "Microsoft.Resources/deployments",
+			"apiVersion": "2024-03-01",
+			"properties": {
+				"mode": "incremental",
+				"templateLink": {
+					"uri": "[concat(parameters('containerUri'), '/ArmTemplate_0.json', parameters('containerSasToken'))]",
+					"contentVersion": "1.0.0.0"
+				},
+				"parameters": {
+					"factoryName": {
+						"value": "[parameters('factoryName')]"
+					},
+					"Datafactorytodatalake_accountKey": {
+						"value": "[parameters('Datafactorytodatalake_accountKey')]"
+					},
+					"SQLtoAzure_password": {
+						"value": "[parameters('SQLtoAzure_password')]"
+					},
+					"Datafactorytodatalake_properties_typeProperties_url": {
+						"value": "[parameters('Datafactorytodatalake_properties_typeProperties_url')]"
+					},
+					"SQLtoAzure_properties_typeProperties_server": {
+						"value": "[parameters('SQLtoAzure_properties_typeProperties_server')]"
+					},
+					"SQLtoAzure_properties_typeProperties_database": {
+						"value": "[parameters('SQLtoAzure_properties_typeProperties_database')]"
+					},
+					"SQLtoAzure_properties_typeProperties_userName": {
+						"value": "[parameters('SQLtoAzure_properties_typeProperties_userName')]"
+					}
+				}
+			},
+			"dependsOn": []
+		}
+	]
+}
