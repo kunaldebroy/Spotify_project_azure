@@ -8,6 +8,11 @@
 				"dependsOn": [],
 				"userProperties": [],
 				"typeProperties": {
+					"items": {
+						"value": "@pipeline().parameters.loop_input",
+						"type": "Expression"
+					},
+					"isSequential": true,
 					"activities": [
 						{
 							"name": "OnpremtoBronze",
@@ -38,7 +43,7 @@
 								"source": {
 									"type": "AzureSqlSource",
 									"sqlReaderQuery": {
-										"value": "select * from @{pipeline().parameters.schema}.@{pipeline().parameters.table} where @{pipeline().parameters.cdc_column} > '@{if(empty(pipeline().parameters.from_date), activity('cdc').output.value[0].cdc, pipeline().parameters.from_date)}'",
+										"value": "select * from @{item().schema}.@{item().table} where @{item().cdc_column} > '@{if(empty(item().from_date), activity('cdc').output.value[0].cdc, item().from_date)}'",
 										"type": "Expression"
 									},
 									"queryTimeout": "02:00:00",
@@ -76,11 +81,11 @@
 									"parameters": {
 										"container": "bronze",
 										"folder": {
-											"value": "@replace(pipeline().parameters.table, 'Dim', '')\n",
+											"value": "@replace(item().table, 'Dim', '')\n",
 											"type": "Expression"
 										},
 										"file": {
-											"value": "@concat(pipeline().parameters.table,'_',variables('time'))",
+											"value": "@concat(item().table,'_',variables('time'))",
 											"type": "Expression"
 										}
 									}
@@ -116,7 +121,10 @@
 									"type": "DatasetReference",
 									"parameters": {
 										"container": "bronze",
-										"folder": "@replace(pipeline().parameters.table, 'Dim', '')",
+										"folder": {
+											"value": "@replace(item().table, 'Dim', '')",
+											"type": "Expression"
+										},
 										"file": {
 											"value": "@concat('cdc/', 'cdc.json')",
 											"type": "Expression"
@@ -179,8 +187,14 @@
 												"type": "DatasetReference",
 												"parameters": {
 													"container": "bronze",
-													"folder": "@replace(pipeline().parameters.table, 'Dim', '')",
-													"file": "@concat(pipeline().parameters.table,'_',variables('time'))"
+													"folder": {
+														"value": "@replace(item().table,'Dim','')",
+														"type": "Expression"
+													},
+													"file": {
+														"value": "@concat(item().table,'_',variables('time'))",
+														"type": "Expression"
+													}
 												}
 											},
 											"logStorageSettings": {
@@ -189,7 +203,7 @@
 													"type": "LinkedServiceReference"
 												},
 												"path": {
-													"value": "@concat('logs/', replace(pipeline().parameters.table, 'Dim', ''), '/', formatDateTime(utcnow(), 'yyyy/MM/dd'))",
+													"value": "@concat('logs/', replace(item().table, 'Dim', ''), '/', formatDateTime(utcNow(), 'yyyy/MM/dd'))",
 													"type": "Expression"
 												}
 											},
@@ -260,8 +274,11 @@
 												"type": "DatasetReference",
 												"parameters": {
 													"container": "bronze",
-													"folder": "cdc",
-													"file": "Empty.json"
+													"folder": "@replace(item().table, 'Dim', '')",
+													"file": {
+														"value": "@concat('cdc/', 'Empty.json')",
+														"type": "Expression"
+													}
 												}
 											}
 										],
@@ -271,7 +288,10 @@
 												"type": "DatasetReference",
 												"parameters": {
 													"container": "bronze",
-													"folder": "@replace(pipeline().parameters.table, 'Dim', '')",
+													"folder": {
+														"value": "@replace(item().table, 'Dim', '')",
+														"type": "Expression"
+													},
 													"file": "@concat('cdc/', 'cdc.json')"
 												}
 											}
@@ -298,7 +318,7 @@
 												{
 													"type": "Query",
 													"text": {
-														"value": "SELECT MAX(@{pipeline().parameters.cdc_column}) AS max_cdc\nFROM @{pipeline().parameters.schema}.@{pipeline().parameters.table}\n",
+														"value": "SELECT MAX(@{item().cdc_column}) AS max_cdc\nFROM @{item().schema}.@{item().table}\n",
 														"type": "Expression"
 													}
 												}
@@ -314,17 +334,40 @@
 			}
 		],
 		"parameters": {
-			"schema": {
-				"type": "string"
-			},
-			"table": {
-				"type": "string"
-			},
-			"cdc_column": {
-				"type": "string"
-			},
-			"from_date": {
-				"type": "string"
+			"loop_input": {
+				"type": "array",
+				"defaultValue": [
+					{
+						"schema": "dbo",
+						"table": "DimUser",
+						"cdc_column": "updated_at",
+						"from_date": ""
+					},
+					{
+						"schema": "dbo",
+						"table": "DimTrack",
+						"cdc_column": "updated_at",
+						"from_date": ""
+					},
+					{
+						"schema": "dbo",
+						"table": "DimDate",
+						"cdc_column": "date",
+						"from_date": ""
+					},
+					{
+						"schema": "dbo",
+						"table": "DimArtist",
+						"cdc_column": "updated_at",
+						"from_date": ""
+					},
+					{
+						"schema": "dbo",
+						"table": "Stream",
+						"cdc_column": "stream_timestamp",
+						"from_date": ""
+					}
+				]
 			}
 		},
 		"variables": {
