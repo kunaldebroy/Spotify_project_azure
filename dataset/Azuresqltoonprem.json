@@ -1,0 +1,12 @@
+{
+	"name": "Azuresqltoonprem",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "SQLtoAzure",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": []
+	}
+}
